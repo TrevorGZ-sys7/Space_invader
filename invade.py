@@ -1,65 +1,76 @@
 import pygame
+import random
 
-pygame.init() #to initialize pygame:)
+pygame.init()  # Initialize pygame
 
-screen = pygame.display.set_mode((800, 600)) #to access the display
+screen = pygame.display.set_mode((800, 600))  # Set up the display
 
-#Tittle and Icon
+# Title and Icon
 pygame.display.set_caption("Space Invaders")
 icon = pygame.image.load('spaceship.png')
 pygame.display.set_icon(icon)
 
-
-
-#player
-playerimg = pygame.image.load('shipp.png') 
+# Player
+playerimg = pygame.image.load('shipp.png')
 playerX = 370
 playerY = 480
-#ENemy
-enemyimg = pygame.image.load('ufo.png') 
-enemyX = 370
-enenmyY = 480
 
-move_left = move_right = move_up = move_down = False
+# Enemy
+enemyimg = pygame.image.load('ufo.png')
+enemyX = random.randint(0, 736)  # Random start position
+enemyY = 50
+enemy_speed = 0.3  # Speed of downward movement
+
+move_left = move_right = False
 
 def player(x, y):
-    screen.blit(playerimg,(x, y ))# blit means to draw
+    screen.blit(playerimg, (x, y))  # Draw the player
 
+def enemy(x, y):
+    screen.blit(enemyimg, (x, y))  # Draw the enemy
 
-# create an event which allows to exit the display
+# Game loop
 running = True
 while running:
-
-        #background colour
-    screen.fill((0,0,100))
+    screen.fill((0, 0, 100))  # Background color
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-        #event for key strokes to move characters
+        # Key press events
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 move_left = True
             elif event.key == pygame.K_RIGHT:
                 move_right = True
-            # when key is released
+
+        # Key release events
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
                 move_left = False
             elif event.key == pygame.K_RIGHT:
                 move_right = False
-            
 
+    # Player movement
     if move_left:
         playerX -= 0.5
     if move_right:
         playerX += 0.5
-    
+
+    # Boundary check for player
     if playerX <= 0:
         playerX = 0
     if playerX >= 736:
         playerX = 736
 
-    player(playerX, playerY)# we call the function here so that it will always appear 
-    pygame.display.update()
+    # Enemy movement
+    enemyY += enemy_speed
+    if enemyY >= 600:  # If enemy reaches the bottom, reset it
+        enemyY = 50
+        enemyX = random.randint(0, 736)
+
+    player(playerX, playerY)  # Draw the player
+    enemy(enemyX, enemyY)  # Draw the enemy
+
+    pygame.display.update()  # Refresh display
